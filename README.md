@@ -120,8 +120,6 @@ sudo systemctl enable postgresql
 
 ### 3. Configuración Inicial de PostgreSQL
 
-### 3. Configuración Inicial de PostgreSQL
-
 #### **Método 1: macOS con Homebrew (más común)**
 
 ```bash
@@ -344,5 +342,5 @@ python main.py --mock --log-level WARNING
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ---
-**Autor**: Juan  
-**Versión**: 1.0
+**Autor**: Juan Ignacio Magarinos Castro
+**Versión**: 1.2
