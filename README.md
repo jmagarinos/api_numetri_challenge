@@ -343,4 +343,5 @@ python main.py --mock --log-level WARNING
 
 ---
 **Autor**: Juan Ignacio Magarinos Castro
+
 **Versión**: 1.2
