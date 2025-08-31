@@ -1,0 +1,4 @@
+2025-08-31 18:18:28 | INFO     | spapi_challenge | Logger configurado. Archivos: spapi_challenge_20250831_181828.log, spapi_errors_20250831_181828.log
+2025-08-31 18:18:28 | INFO     | spapi_challenge | === INICIANDO SP-API CHALLENGE ===
+2025-08-31 18:18:28 | INFO     | spapi_challenge | Modo analytics-only solicitado
+2025-08-31 18:18:28 | INFO     | spapi_challenge | Analizando 11 transacciones existentes

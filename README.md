@@ -1,6 +1,6 @@
 # Amazon SP-API Transactions Challenge
 
-Sistema completo para obtener, validar y analizar transacciones de Amazon SP-API con persistencia en PostgreSQL.
+Sistema completo para obtener, validar y analizar transacciones de Amazon SP-API con persistencia en PostgreSQL y logging estructurado.
 
 ## 🚀 Instalación Rápida
 
@@ -15,7 +15,9 @@ pip install -r requirements.txt
 cp .env.example .env
 # Editar .env con tus credenciales reales
 
-# 4. Ejecutar en modo mock (sin credenciales)
+# 4. Configurar PostgreSQL manualmente (ver sección Database Setup)
+
+# 5. Ejecutar en modo mock (sin credenciales)
 python main.py --mock
 ```
 
@@ -29,8 +31,10 @@ spapi-challenge/
 ├── validator.py         # Validaciones de datos
 ├── database.py          # Manejo de PostgreSQL
 ├── analytics.py         # Reportes y análisis
+├── logger.py            # Sistema de logging
 ├── requirements.txt     # Dependencias Python
 ├── .env.example         # Ejemplo de variables de entorno
+├── logs/                # Directorio de logs (se crea automáticamente)
 └── README.md           # Este archivo
 ```
 
@@ -54,12 +58,22 @@ PGPASSWORD=app_pass
 
 ### 2. PostgreSQL
 
-Asegúrate de tener PostgreSQL corriendo y la base de datos creada:
+**Configuración manual:**
 
-```sql
+```bash
+# Conectar como superusuario (varía según instalación)
+psql -d postgres
+
+# En macOS con Homebrew:
+psql -d postgres
+
+# Crear base y usuario
 CREATE DATABASE app_db;
 CREATE USER app_user WITH PASSWORD 'app_pass';
 GRANT ALL PRIVILEGES ON DATABASE app_db TO app_user;
+\c app_db
+GRANT ALL ON SCHEMA public TO app_user;
+\q
 ```
 
 ## 🎯 Uso
@@ -78,6 +92,9 @@ python main.py --mock --scenario 401
 
 # Simular throttling (429)
 python main.py --mock --scenario 429
+
+# Con logging detallado
+python main.py --mock --scenario ok --log-level DEBUG
 ```
 
 ### Modo Real (SP-API)
@@ -103,7 +120,7 @@ python main.py --real --sandbox
 python main.py --analytics-only
 ```
 
-## 📊 Funcionalidades
+## 📋 Funcionalidades
 
 ### ✅ Validaciones Implementadas
 
@@ -122,6 +139,14 @@ python main.py --analytics-only
 - **5xx (Server errors)**: Reintentos con backoff
 - **Timeouts**: Configurables por request
 
+### 📊 Logging Estructurado
+
+- **Archivos**: `logs/spapi_challenge_YYYYMMDD_HHMMSS.log`
+- **Errores**: `logs/spapi_errors_YYYYMMDD_HHMMSS.log`
+- **Niveles**: DEBUG, INFO, WARNING, ERROR
+- **Consola + Archivo**: Salida dual automática
+- **Structured**: API requests, validaciones, DB operations, reintentos
+
 ### 📈 Analytics Incluidos
 
 - **KPIs**: Total transacciones, órdenes únicas, bruto/neto, refund rate, AOV
@@ -129,19 +154,52 @@ python main.py --analytics-only
 - **Diario**: Evolución día a día
 - **Por SKU**: Si está disponible en los detalles
 
-## 🧪 Testing
+## 🧪 Testing Completo
 
-El modo mock incluye datos de prueba que cubren diferentes casos:
+### **Secuencia recomendada:**
 
-```python
-# En Python/Jupyter
-from main import main
+```bash
+# 1. Verificar PostgreSQL
+brew services list | grep postgres  # macOS
+sudo systemctl status postgresql     # Linux
 
-# Mock con datos
-main(["--mock", "--scenario", "ok"])
+# 2. Test básico exitoso  
+python main.py --mock --scenario ok
 
-# Mock sin datos
-main(["--mock", "--scenario", "empty"])
+# 3. Test manejo de errores
+python main.py --mock --scenario 401
+python main.py --mock --scenario 429
+
+# 4. Test datos vacíos
+python main.py --mock --scenario empty
+
+# 5. Test analytics
+python main.py --analytics-only
+
+# 6. Test con logging detallado
+python main.py --mock --scenario ok --log-level DEBUG
+
+# 7. Si tienes credenciales, test real
+python main.py --real --sandbox
+```
+
+### **Casos de prueba incluidos:**
+
+- ✅ **Datos válidos**: Transacciones normales Order/Refund
+- ❌ **IDs duplicados**: Detecta duplicados en el mismo batch
+- ❌ **Fechas inválidas**: Formato incorrecto, fechas futuras
+- ⚠️ **Fechas antiguas**: Warning para datos >370 días
+- ❌ **Monedas inválidas**: Códigos no ISO 4217
+- ⚠️ **Refunds positivos**: Warning por signo incorrecto
+- ✅ **Campos opcionales**: Maneja SKUs, reasons, etc.
+
+### **Logs generados:**
+
+```
+logs/
+├── spapi_challenge_20250831_171530.log    # Log completo
+├── spapi_errors_20250831_171530.log       # Solo errores
+└── ...
 ```
 
 ## ⚡ Optimizaciones
@@ -180,11 +238,14 @@ echo $LWA_CLIENT_ID
 python main.py --mock
 ```
 
-### Dependencias faltantes
+### Error de logging o archivos de log
 
 ```bash
-# Reinstalar dependencias
-pip install -r requirements.txt --upgrade
+# Verificar permisos de escritura
+ls -la logs/
+
+# Cambiar nivel de logging
+python main.py --mock --log-level WARNING
 ```
 
 ## 📚 Recursos
@@ -194,5 +255,5 @@ pip install -r requirements.txt --upgrade
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ---
-**Autor**: Juan  
-**Versión**: 1.0
+**Autor**: Juan Ignacio Magariños Castro
+**Versión**: 1.1
