@@ -56,24 +56,110 @@ PGUSER=app_user
 PGPASSWORD=app_pass
 ```
 
-### 2. PostgreSQL
+### 2. Instalación de PostgreSQL
 
-**Configuración manual:**
+#### **macOS (Homebrew)**
 
 ```bash
-# Conectar como superusuario (varía según instalación)
+# Instalar PostgreSQL
+brew install postgresql
+
+# Iniciar servicio
+brew services start postgresql
+
+# Verificar que esté corriendo
+brew services list | grep postgres
+```
+
+#### **macOS (PostgreSQL.app)**
+
+```bash
+# Descargar desde: https://postgresapp.com/
+# Instalar y ejecutar la app
+# PostgreSQL estará disponible en puerto 5432
+```
+
+#### **Ubuntu/Debian**
+
+```bash
+# Instalar PostgreSQL
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# Iniciar servicio
+sudo systemctl start postgresql
+sudo systemctl enable postgresql  # Auto-inicio
+
+# Verificar estado
+sudo systemctl status postgresql
+```
+
+#### **CentOS/RHEL/Fedora**
+
+```bash
+# Instalar PostgreSQL
+sudo dnf install postgresql postgresql-server  # Fedora
+# o
+sudo yum install postgresql postgresql-server  # CentOS/RHEL
+
+# Inicializar base de datos
+sudo postgresql-setup initdb
+
+# Iniciar servicio
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+#### **Windows**
+
+```bash
+# Descargar desde: https://www.postgresql.org/download/windows/
+# Ejecutar instalador y seguir wizard
+# Por defecto queda en puerto 5432
+```
+
+### 3. Configuración Inicial de PostgreSQL
+
+### 3. Configuración Inicial de PostgreSQL
+
+#### **Método 1: macOS con Homebrew (más común)**
+
+```bash
+# PostgreSQL con Homebrew usa tu usuario actual como superusuario
 psql -d postgres
 
-# En macOS con Homebrew:
-psql -d postgres
-
-# Crear base y usuario
+# Dentro de psql, ejecutar:
 CREATE DATABASE app_db;
 CREATE USER app_user WITH PASSWORD 'app_pass';
 GRANT ALL PRIVILEGES ON DATABASE app_db TO app_user;
 \c app_db
 GRANT ALL ON SCHEMA public TO app_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO app_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO app_user;
 \q
+```
+
+#### **Método 2: Linux/Windows (usuario postgres)**
+
+```bash
+# Conectar como usuario postgres
+sudo -u postgres psql
+
+# Dentro de psql, ejecutar los mismos comandos de arriba
+CREATE DATABASE app_db;
+CREATE USER app_user WITH PASSWORD 'app_pass';
+# ... resto igual
+\q
+```
+
+#### **Verificar configuración:**
+
+```bash
+# Probar conexión con el usuario creado
+psql -h 127.0.0.1 -U app_user -d app_db -c "SELECT version();"
+
+# Si funciona, verás la versión de PostgreSQL
 ```
 
 ## 🎯 Uso
@@ -222,10 +308,13 @@ logs/
 
 ```bash
 # Verificar que PostgreSQL esté corriendo
-sudo systemctl status postgresql
+brew services start postgresql       # macOS
+sudo systemctl start postgresql      # Linux
 
-# Verificar conexión
-psql -h 127.0.0.1 -U app_user -d app_db
+# Verificar conexión manual
+psql -h 127.0.0.1 -U app_user -d app_db -c "SELECT 1;"
+
+# Si falla, recrear base de datos (ver sección Configuración)
 ```
 
 ### Error de credenciales SP-API
@@ -255,5 +344,5 @@ python main.py --mock --log-level WARNING
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ---
-**Autor**: Juan Ignacio Magariños Castro
-**Versión**: 1.1
+**Autor**: Juan  
+**Versión**: 1.0
