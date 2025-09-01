@@ -34,6 +34,7 @@ spapi-challenge/
 ├── logger.py            # Sistema de logging
 ├── requirements.txt     # Dependencias Python
 ├── .env.example         # Ejemplo de variables de entorno
+├── .gitignore           # Archivos a ignorar en git
 ├── logs/                # Directorio de logs (se crea automáticamente)
 └── README.md           # Este archivo
 ```
@@ -343,5 +344,4 @@ python main.py --mock --log-level WARNING
 
 ---
 **Autor**: Juan Ignacio Magarinos Castro
-
-**Versión**: 1.2
+**Versión**: 1.3
