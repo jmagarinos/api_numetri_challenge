@@ -112,8 +112,6 @@ def log_process_summary(logger: logging.Logger, mode: str, scenario: str = None,
     
     logger.info(f"PROCESS_SUMMARY | {mode_str}{scenario_str} | Processed: {total_processed}{time_str}")
 
-
-# Logger global para uso fácil
 _global_logger = None
 
 def get_logger() -> logging.Logger:

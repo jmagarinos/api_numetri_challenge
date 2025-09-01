@@ -113,7 +113,6 @@ def get_transaction_count() -> int:
         df = pd.read_sql(query, engine)
         return df.iloc[0]['count'] if not df.empty else 0
     except Exception:
-        # Si la tabla no existe aún, retornar 0
         return 0
 
 

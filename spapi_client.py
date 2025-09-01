@@ -164,7 +164,7 @@ class MockSPAPIClient:
                     "type": "Order",
                     "amount": {"currencyCode": "USD", "amount": "19.99"},
                     "marketplaceId": "ATVPDKIKX0DER",
-                    "details": {"orderId": "903-1234567-1234567"}
+                    "details": {"orderId": "903-1234567-1234567", "sku": "SKU-MOCK-001"}
                 },
                 {
                     "transactionId": "tx-mock-002", 
@@ -172,7 +172,7 @@ class MockSPAPIClient:
                     "type": "Refund",
                     "amount": {"currencyCode": "USD", "amount": "-5.00"},
                     "marketplaceId": "ATVPDKIKX0DER",
-                    "details": {"orderId": "903-1234567-1234567", "reason": "CustomerReturn"}
+                    "details": {"orderId": "903-1234567-1234567", "reason": "CustomerReturn", "sku": "SKU-MOCK-001"}
                 }
             ],
             "nextToken": None

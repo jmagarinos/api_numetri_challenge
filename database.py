@@ -39,7 +39,6 @@ def ensure_table_and_indexes():
     );
     """
     
-    # Agregar columna posted_day si no existe (migración)
     alter_posted_day = """
     ALTER TABLE spapi_transactions 
     ADD COLUMN IF NOT EXISTS posted_day date;
@@ -84,7 +83,7 @@ def save_transactions(transactions: List[Dict[str, Any]]) -> int:
     values = []
     for tx in transactions:
         if not tx.get("transaction_id"):
-            continue  # Saltar filas sin ID
+            continue  
             
         values.append((
             tx["transaction_id"],

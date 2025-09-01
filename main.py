@@ -146,11 +146,7 @@ Ejemplos de uso:
         # Validar datos
         valid_transactions, has_errors = validate_and_report(api_data)
         
-        # Log de validación
-        normalized_count = len(api_data.get("transactions", []))
-        errors_list = []  # validate_and_report ya maneja el logging internamente
-        warnings_list = []
-        
+
         if has_errors:
             logger.warning("Hay errores en los datos. Solo se procesarán las transacciones válidas.")
             print("⚠️  Hay errores en los datos. Solo se procesarán las transacciones válidas.")
@@ -172,7 +168,7 @@ Ejemplos de uso:
                 logger.info(f"Verificación DB: {len(saved_data)} transacciones recuperadas")
                 print(f"\n🔍 Verificación DB: {len(saved_data)} transacciones recuperadas")
                 
-                for tx in saved_data[:3]:  # Mostrar primeras 3
+                for tx in saved_data[:3]:  
                     print(f"  - {tx['transaction_id']}: {tx['type']} {tx['amount']} {tx['currency_code']}")
                 if len(saved_data) > 3:
                     print(f"  ... y {len(saved_data) - 3} más")
